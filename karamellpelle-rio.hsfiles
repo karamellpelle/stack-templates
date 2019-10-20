@@ -1,0 +1,363 @@
+{-# START_FILE .gitignore #-}
+*.cabal
+*~
+*.sw*
+tarballs/
+.stack-work/
+tmp/
+
+{-# START_FILE ChangeLog.md #-}
+# Changelog for {{name}}
+
+## Unreleased changes
+
+{-# START_FILE LICENSE #-}
+Copyright {{author-name}}{{^author-name}}Author name here{{/author-name}} (c) 2019
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    * Neither the name of Author name here nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE {{copyright}}{{^copyright}}{{year}}{{^year}}2019{{/year}} {{author-name}}{{^author-name}}Author name here{{/author-name}}{{/copyright}} HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE {{copyright}}{{^copyright}}{{year}}{{^year}}2019{{/year}} {{author-name}}{{^author-name}}Author name here{{/author-name}}{{/copyright}}
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+{-# START_FILE README.md #-}
+# {{name}}
+
+{-# START_FILE Setup.hs #-}
+import Distribution.Simple
+main = defaultMain
+
+{-# START_FILE source-app/Main.hs #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE ApplicativeDo #-}
+module Main (main) where
+
+import Options.Applicative.Simple
+import Development.GitRev
+import Paths_{{name-as-varid}}
+
+import App
+import Command
+
+import RIO.Process
+
+
+
+--------------------------------------------------------------------------------
+-- | name of application.
+--   TODO: find this from stack package (Paths_{{name-as-varid}} does not expose it)
+executableName :: String
+executableName = "{{name}}"
+
+
+--------------------------------------------------------------------------------
+--  magic starts here
+
+main :: IO ()
+main = do
+
+  -- what shall we do?
+  (opts, cmd) <- getGlobalOptsCommands
+
+  --verbose <- isJust <$> lookupEnv "RIO_VERBOSE"
+  lo <- logOptionsHandle stderr False --verbose
+  po <- mkDefaultProcessContext
+
+  withLogFunc lo $ \lf ->
+    let run = Runner
+              { runnerLogFunc = lf
+              , runnerProcessContext = po
+              , runnerGlobalOpts = opts
+              }
+     in runRIO run $ rioApplication cmd
+ 
+
+-- | RIO starts here!
+rioApplication :: Command -> RIO' ()
+rioApplication cmd = do
+    --logInfo $ fromString $ "we are running!" 
+    case cmd of
+      CommandXXX args      -> xxx args
+      CommandEmpty         -> pure ()
+
+
+--------------------------------------------------------------------------------
+--  
+
+-- | retrieve commands and arguments from command line
+getGlobalOptsCommands :: IO (GlobalOpts, Command)
+getGlobalOptsCommands = do
+    simpleOptions versionStr headerStr descriptionStr 
+                  pGlobalOpts pCommand
+    where
+      versionStr = $(simpleVersion Paths_{{name-as-varid}}.version)
+      headerStr = executableName ++ " : <TODO: app description>"
+      descriptionStr = "for command specific help, use '" ++ executableName ++ " COMMAND --help'"
+
+      -- global options
+      pGlobalOpts = do
+          -- verbose output? (optional)
+          verbose <- switch (long "verbose" <> short 'v' <> help "verbose output")
+
+          pure $ GlobalOpts { globaloptsVerbose = verbose }
+    
+      -- commands
+      pCommand = do
+          addCommand "xxx" "<TODO: command description>" id $ do
+              -- files/folders (optional). default all
+              --filepath <- strArgument (metavar "PATH" <> help "path(s)")
+
+              pure $ CommandXXX $ XXXArgs --filepath
+              
+          -- TODO: more commands
+
+{-# START_FILE package.yaml #-}
+name:                {{name}}
+version:             0.1.0.0
+github:              {{github-username}}{{^github-username}}githubuser{{/github-username}}/{{name}}
+license:             BSD3
+author:              {{author-name}}{{^author-name}}Author name here{{/author-name}}
+maintainer:          {{author-email}}{{^author-email}}example@example.com{{/author-email}}
+copyright:           {{copyright}}{{^copyright}}{{year}}{{^year}}2019{{/year}} {{author-name}}{{^author-name}}Author name here{{/author-name}}{{/copyright}}
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on Github at <https://github.com/{{github-username}}{{^github-username}}githubuser{{/github-username}}/{{name}}#readme>
+
+dependencies:
+- base >= 4.11 && < 10
+- rio >= 0.1.8.0
+- gitrev
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wpartial-fields
+- -Wredundant-constraints
+- -Wno-unused-imports
+- -Wno-dodgy-exports
+- -Wno-overlapping-patterns
+- -Wno-unused-top-binds
+
+default-extensions:
+- NoImplicitPrelude
+- OverloadedStrings
+
+library:
+  source-dirs: source-lib
+
+executables:
+  {{name}}:
+    main:                Main.hs
+    source-dirs:         source-app
+    dependencies:
+    - {{name}}
+    - optparse-simple
+
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+
+{-# START_FILE GHCI.hs #-}
+--------------------------------------------------------------------------------
+--  various GHCI scripting 
+
+
+{-# START_FILE source-lib/MyPrelude.hs #-}
+module MyPrelude
+  (
+    UInt,
+
+    fI,
+    succ',
+    io,
+) where
+
+import RIO
+
+
+--------------------------------------------------------------------------------
+--  
+
+-- | using Int's is wrong, it's overkill like using complex numbers.
+--   since "sets" is a natural logical concept, we need a data structure for
+--   that, namely UInt. or should we use Peano numbers? 
+--   the natural numbers \mathbf{N} is the structure "sets of finite size"
+--   the integer numbers \mathbf{Z} is the structure "steps in direction"
+type UInt = Word    
+
+--------------------------------------------------------------------------------
+--  
+
+io :: MonadIO m => IO a -> m a 
+io = liftIO
+
+fI :: (Integral a, Num b) => a -> b
+fI = fromIntegral
+
+-- | we don't want 'succ' from Prelude since it do bounds checking
+succ' :: Num a => a -> a
+succ' = \a -> a + 1
+
+{-# START_FILE source-lib/Value.hs #-}
+module Value
+  (
+      --valueXXX,
+  ) where
+
+import RIO
+import MyPrelude
+
+
+--valueXXX :: X
+--valueXXX = x
+
+{-# START_FILE source-app/App.hs #-}
+module App
+  (
+    Runner (..),
+    RIO' (..),
+    GlobalOpts (..),
+
+    HasGlobalOpts (..),
+  
+    module MyPrelude,
+    module RIO,
+    module Paths_{{name-as-varid}}
+  ) where
+
+import RIO
+import RIO.Process
+import Paths_{{name-as-varid}}
+
+import MyPrelude
+
+
+--------------------------------------------------------------------------------
+--  our program configuration
+
+
+-- | inspired by Stack.Types.Config of commercialhaskell/stack on GitHub and RIO.Prelude.Simple.SimpleApp
+data Runner = Runner
+    { 
+        runnerLogFunc :: !LogFunc,
+        runnerProcessContext :: !ProcessContext,
+        runnerGlobalOpts :: !GlobalOpts
+    }
+
+--------------------------------------------------------------------------------
+--  our Reader + IO monad
+
+type RIO' = RIO Runner 
+
+
+-- HasGlobalOpts
+class HasGlobalOpts env where
+    globalOptsL :: Lens' env GlobalOpts
+
+instance HasGlobalOpts Runner where
+    globalOptsL = lens runnerGlobalOpts (\x y -> x { runnerGlobalOpts = y })
+
+-- HasLogFunc
+instance HasLogFunc Runner where
+    logFuncL = lens runnerLogFunc (\x y -> x { runnerLogFunc = y })
+
+--  HasProcessContext
+instance HasProcessContext Runner where
+    processContextL = lens runnerProcessContext (\x y -> x { runnerProcessContext = y })
+
+
+
+--------------------------------------------------------------------------------
+--  options to be used through the whole program
+
+data GlobalOpts = GlobalOpts
+    { 
+        globaloptsVerbose :: !Bool
+    }
+
+
+{-# START_FILE source-app/Command/XXX.hs #-}
+module Command.XXX
+  (
+    xxx,
+    XXXArgs (..),
+  ) where
+
+import App
+
+--------------------------------------------------------------------------------
+--  
+
+-- | how to use the 'read' command
+data XXXArgs = XXXArgs
+    --{
+    --    xxxargsFilePath :: FilePath
+    --}
+
+
+--------------------------------------------------------------------------------
+--  the 'xxx' command
+
+xxx :: XXXArgs -> RIO' ()
+xxx args = do
+    --let path = xxxargsFilePath args
+    
+    logInfo $ "running xxx command"
+
+{-# START_FILE source-app/Command.hs #-}
+module Command
+  (
+      Command (..),
+      module Command.XXX,
+  ) where
+
+
+import App
+import Command.XXX
+
+
+--------------------------------------------------------------------------------
+--  
+
+-- | the available commands
+data Command = 
+    CommandXXX     XXXArgs  |
+    CommandEmpty 
+

@@ -1,2 +1,4 @@
 karamellpelle-rio:
-  description: How github.com/karamellpelle create RIO programs
+  description: application based on RIO
+relude-app:
+  description: application based on relude

@@ -1,0 +1,12 @@
+---
+name: "dummy"
+github-username: "github-dummy"
+license: "DUMMYLICENSE"
+author-name: "Dummy Author"
+author-email: "dummyauthor@mustache.rb"
+copyright: "Dummy Inc."
+year: 2222
+name-as-varid: "dummy"
+
+
+---

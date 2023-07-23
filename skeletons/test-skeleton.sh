@@ -12,7 +12,7 @@ skelname="$1"
 projname="${2:-$1}"
 
 # create destination for $projname if it does not exists
-mkdir -p $destdir
+mkdir -p "$destdir"
 
 skeldir="$dirname/$skelname"
 projdir="$destdir/$projname"
@@ -27,13 +27,13 @@ if [ -z "$1" ]; then
 fi
 
 # test if skeleton name exist
-if ! test -d $skeldir; then 
+if ! test -d "$skeldir"; then 
   echo "'$skelname' is not a skeleton, exiting."
   exit
 fi 
 
 # prompt before overwriting 
-if test -d $projdir; then 
+if test -d "$projdir"; then 
   echo "Destination $projname exist. Do you want to overwrite?"
   select yn in "Yes" "No"; do
       case $yn in

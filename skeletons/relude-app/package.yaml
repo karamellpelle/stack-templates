@@ -19,7 +19,7 @@ author:
 maintainer:
     {{author-email}}{{^author-email}}example@example.com{{/author-email}}
 copyright:
-    {{copyright}}{{^copyright}}{{year}}{{^year}}2023{{/year}} {{author-name}}{{^author-name}}Author name here{{/author-name}}{{/copyright}}
+    {{copyright}}{{^copyright}}{{year}}{{^year}}2024{{/year}} {{author-name}}{{^author-name}}Author name here{{/author-name}}{{/copyright}}
 category:
     {{category}}{{^category}}Application{{/category}}
 extra-source-files:
@@ -128,3 +128,4 @@ tests:
             - tasty
             - tasty-hedgehog
             - tasty-hunit
+

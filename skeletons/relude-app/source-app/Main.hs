@@ -1,4 +1,4 @@
--- Copyright (C) 2024 karamellpelle@hotmail.com
+-- Copyright (C) {{year}} {{copyright}}
 -- 
 -- This file is part of '{{name}}'.
 -- 

@@ -34,10 +34,10 @@ fi
 
 # prompt before overwriting 
 if test -d "$projdir"; then 
-  echo "Destination $projdir/$projname exist. Do you want to overwrite?"
+  echo "Destination $projdir exist. Do you want to overwrite?"
   select yn in "Yes" "No"; do
       case $yn in
-          Yes ) break;;
+          Yes ) rm -rf $projdir; break;;
           No ) echo "Exiting."; exit;;
       esac
   done
@@ -46,7 +46,7 @@ fi
 echo -n "Copying files "
 #rsync -a -v --progress "$skeldir" "$projdir" 
 #rsync -a -v --progress --ignore-existing "$skeldir" "$projdir" 
-cp -r "$skeldir" "$projdir" # FIXME: this does not overwrite but insert
+cp -r "$skeldir" "$projdir" 
 echo "OK"
 
 echo -n "Writing variables "

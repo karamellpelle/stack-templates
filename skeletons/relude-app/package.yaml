@@ -1,0 +1,130 @@
+---
+
+spec-version: 0.36.0
+
+name:
+    {{name}}
+version:
+    0.0
+github:
+    {{github-username}}{{^github-username}}githubuser{{/github-username}}/{{name}}
+homepage:
+    https://github.com/{{github-username}}{{^github-username}}githubuser{{/github-username}}/{{name}}#readme
+license:
+    {{license}}
+license-file:
+    LICENSE
+author:
+    {{author-name}}{{^author-name}}Author name here{{/author-name}}
+maintainer:
+    {{author-email}}{{^author-email}}example@example.com{{/author-email}}
+copyright:
+    {{copyright}}{{^copyright}}{{year}}{{^year}}2023{{/year}} {{author-name}}{{^author-name}}Author name here{{/author-name}}{{/copyright}}
+category:
+    {{category}}{{^category}}Application{{/category}}
+extra-source-files:
+    - README.md
+    - CHANGELOG.md
+
+synopsis:
+    Short, one-line summary of project here.
+
+description: |
+    Please see the README on Github at <https://github.com/{{github-username}}{{^github-username}}githubuser{{/github-username}}/{{name}}#readme>
+
+    Maybe include a simple usage example.
+
+language: GHC2021 # FIXME: use GHC2024 when stack includes 6.10.1 <= GHC
+
+data-dir:            
+    data-dir
+data-files:
+    - data-dir/{{name}}/**/*
+
+dependencies:
+    - base
+    - relude
+    - data-default
+    - microlens
+    - microlens-th
+    - microlens-mtl
+    - mtl
+    #- prettyprinter
+    #- pretty-simple
+    #- attoparsec
+
+ghc-options:
+    - -Wall
+    - -Wcompat
+    - -Widentities
+    - -Wincomplete-record-updates
+    - -Wincomplete-uni-patterns
+    - -Wmissing-export-lists
+    - -Wmissing-home-modules
+    - -Wpartial-fields
+    - -Wredundant-constraints
+    - -Wprepositive-qualified-module
+    - -Wno-name-shadowing
+    - -Wno-unused-top-binds
+    - -Wno-unused-matches
+    - -Wno-unused-imports
+
+default-extensions:
+    - GHC2021 # FIXME: GHC2024
+    - NoImplicitPrelude
+    - OverloadedStrings
+    - LambdaCase
+
+
+# private libraries (https://github.com/sol/hpack#library-fields)
+internal-libraries:
+
+    {{name}}-internal:
+        source-dirs:  source-internal
+        exposed-modules:
+            - My
+        #dependencies:
+
+executables:
+    {{name}}:
+        source-dirs: source-app
+        main:        Main.hs
+        ghc-options:
+            - -threaded
+            - -rtsopts
+            - -with-rtsopts "-N"
+        generated-other-modules: 
+            - Paths_{{name-as-varid}}
+            - PackageInfo_{{name-as-varid}}
+        dependencies:
+            - {{name}}-internal
+            - file-io
+            - os-string
+            - directory
+            - filepath
+            - gitrev
+
+
+#library:
+#    source-dirs:    source-lib
+#    exposed-modules:
+#    generated-other-modules:
+#        - Paths_{{name-as-varid}}
+
+
+tests:
+    {{name}}-test:
+        source-dirs: tests/{{name}}-test
+        main:        Spec.hs
+        ghc-options:
+            - -threaded
+            - -rtsopts
+            - -with-rtsopts "-N -T"
+            - -Wno-unused-packages
+        dependencies:
+            - {{name}}-internal
+            - pretty-simple
+            - hedgehog
+            - tasty
+            - tasty-hedgehog
+            - tasty-hunit

@@ -1,0 +1,16 @@
+module ${1:`substitute(substitute(substitute(fnamemodify(expand('%:r'),":~:."),"\\([a-z-_]\\+/\\)*","",""),'[/\\]','.','g'),'^\%(\l*\.\)\?','','')`}
+  (
+    -- export this module (for ghci):
+    module $1,
+    -- export imported modules (for ghci):
+
+  ) where
+
+import Relude
+import My
+
+
+--------------------------------------------------------------------------------
+--
+
+$0

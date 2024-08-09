@@ -1,0 +1,6 @@
+# put files/folders to ignore in this folder here:
+# example: all
+# *
+
+# don't ignore itself
+!.gitignore

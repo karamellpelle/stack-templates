@@ -1,0 +1,87 @@
+---
+
+spec-version: 0.36.0
+
+name:
+    {{name}}
+version:
+    0.0
+github:
+    {{github-username}}{{^github-username}}githubuser{{/github-username}}/{{name}}
+homepage:
+    https://github.com/{{github-username}}{{^github-username}}githubuser{{/github-username}}/{{name}}#readme
+#license:
+#    {{license}}
+#license-file:
+#    LICENSE
+author:
+    {{author-name}}{{^author-name}}Author name here{{/author-name}}
+maintainer:
+    {{author-email}}{{^author-email}}example@example.com{{/author-email}}
+copyright:
+    {{copyright}}{{^copyright}}{{year}}{{^year}}2024{{/year}} {{author-name}}{{^author-name}}Author name here{{/author-name}}{{/copyright}}
+category:
+    Script
+extra-source-files:
+    - README.md
+synopsis:
+    A stack template for ghci scripts
+
+language: GHC2021 # FIXME: use GHC2024 when stack includes 6.10.1 <= GHC
+
+data-dir:            
+    data-dir
+#data-files:
+#    - data-dir/**/*
+
+dependencies:
+    - base
+    - relude
+    - data-default
+    - microlens
+    - microlens-th
+    - microlens-mtl
+    - mtl
+    - pretty-simple
+    - file-io
+    - os-string
+    - directory
+    - filepath
+    - fakedata
+    #- attoparsec
+
+ghc-options:
+    - -Wall
+    - -Wcompat
+    - -Widentities
+    - -Wincomplete-record-updates
+    - -Wincomplete-uni-patterns
+    - -Wpartial-fields
+    - -Wredundant-constraints
+    - -Wprepositive-qualified-module
+    - -Wno-name-shadowing
+    - -Wno-unused-top-binds
+    - -Wno-unused-matches
+    - -Wno-unused-imports
+
+default-extensions:
+    - GHC2021 # FIXME: GHC2024
+    - NoImplicitPrelude
+    - OverloadedStrings
+    - LambdaCase
+
+
+# private libraries (https://github.com/sol/hpack#library-fields)
+internal-libraries:
+
+    {{name}}-internal:
+        source-dirs:  
+          - .
+          - source-internal
+        #generated-other-modules: 
+            #- Paths_{{name-as-varid}}
+            #- PackageInfo_{{name-as-varid}}
+        exposed-modules:
+            - Main
+            - My
+        #dependencies:

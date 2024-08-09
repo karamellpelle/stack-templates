@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# add 'mustache' command, installed by `gem install --user-install mustache`
-export PATH=$PATH:~/.gem/ruby/2.6.0/bin
-
 #dirname=$(dirname "$0")
 dirname="$PWD"
 #echo $dirname
@@ -52,6 +49,6 @@ echo "OK"
 echo -n "Writing variables "
 # write variables defined in 'dummy.yaml'
 # https://askubuntu.com/a/528661 (brew install moreutils)
-find "$projdir" -type f -exec bash -c "mustache \"$dummyfile\" \"{}\" | sponge \"{}\"" \;
+find "$projdir" -type f -exec bash -c "haskell-mustache \"{}\" \"$dummyfile\" | sponge \"{}\"" \;
 echo "OK"
 

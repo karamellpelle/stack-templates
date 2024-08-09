@@ -1,0 +1,209 @@
+{-# START_FILE .ghci #-}
+:set -Wno-unused-imports -Wno-missing-export-lists -Wno-missing-home-modules -Wno-type-defaults
+:set +m
+
+{-# START_FILE .gitignore #-}
+.stack-work/
+*~
+*.swp
+.*.swo
+tarballs/
+.stack-work/
+.DS_Store
+gmon.out
+leaks-*.txt
+session.vim
+tmp
+*.cabal
+stack.yaml.lock
+
+{-# START_FILE .skeletons/haskell.snippet #-}
+module ${1:`substitute(substitute(substitute(fnamemodify(expand('%:r'),":~:."),"\\([a-z-_]\\+/\\)*","",""),'[/\\]','.','g'),'^\%(\l*\.\)\?','','')`}
+  (
+    -- export this module (for ghci):
+    module $1,
+    -- export imported modules (for ghci):
+
+  ) where
+
+import Relude
+import My
+
+
+--------------------------------------------------------------------------------
+--
+
+$0
+
+{-# START_FILE Main.hs #-}
+module Main
+  (
+    -- export this module (for ghci):
+    module Main, 
+    -- export imported modules (for ghci):
+
+  ) where
+
+import Relude
+import My
+
+
+--------------------------------------------------------------------------------
+--
+
+main :: IO ()
+main = do
+
+    putTextLn "{{name}}"
+
+
+{-# START_FILE README.md #-}
+# {{name}}
+
+Use `stack init` before `./ghci.sh` to create a necessary `stack.yaml`. 
+
+
+
+{-# START_FILE TODO.md #-}
+# TODO
+
+
+{-# START_FILE data-dir/.gitignore #-}
+# put files/folders to ignore in this folder here:
+# example: all
+# *
+
+# don't ignore itself
+!.gitignore
+
+{-# START_FILE ghci.sh #-}
+
+stack ghci --no-package-hiding --ghci-options="-interactive-print=Text.Pretty.Simple.pPrint" "$@"
+
+{-# START_FILE package.yaml #-}
+---
+
+spec-version: 0.36.0
+
+name:
+    {{name}}
+version:
+    0.0
+github:
+    {{github-username}}{{^github-username}}githubuser{{/github-username}}/{{name}}
+homepage:
+    https://github.com/{{github-username}}{{^github-username}}githubuser{{/github-username}}/{{name}}#readme
+#license:
+#    {{license}}
+#license-file:
+#    LICENSE
+author:
+    {{author-name}}{{^author-name}}Author name here{{/author-name}}
+maintainer:
+    {{author-email}}{{^author-email}}example@example.com{{/author-email}}
+copyright:
+    {{copyright}}{{^copyright}}{{year}}{{^year}}2024{{/year}} {{author-name}}{{^author-name}}Author name here{{/author-name}}{{/copyright}}
+category:
+    Script
+extra-source-files:
+    - README.md
+synopsis:
+    A stack template for ghci scripts
+
+language: GHC2021 # FIXME: use GHC2024 when stack includes 6.10.1 <= GHC
+
+data-dir:            
+    data-dir
+#data-files:
+#    - data-dir/**/*
+
+dependencies:
+    - base
+    - relude
+    - data-default
+    - microlens
+    - microlens-th
+    - microlens-mtl
+    - mtl
+    - pretty-simple
+    - file-io
+    - os-string
+    - directory
+    - filepath
+    - fakedata
+    #- attoparsec
+
+ghc-options:
+    - -Wall
+    - -Wcompat
+    - -Widentities
+    - -Wincomplete-record-updates
+    - -Wincomplete-uni-patterns
+    - -Wpartial-fields
+    - -Wredundant-constraints
+    - -Wprepositive-qualified-module
+    - -Wno-name-shadowing
+    - -Wno-unused-top-binds
+    - -Wno-unused-matches
+    - -Wno-unused-imports
+
+default-extensions:
+    - GHC2021 # FIXME: GHC2024
+    - NoImplicitPrelude
+    - OverloadedStrings
+    - LambdaCase
+
+
+# private libraries (https://github.com/sol/hpack#library-fields)
+internal-libraries:
+
+    {{name}}-internal:
+        source-dirs:  
+          - .
+          - source-internal
+        #generated-other-modules: 
+            #- Paths_{{name-as-varid}}
+            #- PackageInfo_{{name-as-varid}}
+        exposed-modules:
+            - Main
+            - My
+        #dependencies:
+
+{-# START_FILE source-internal/My.hs #-}
+module My 
+(
+    module Relude,
+    module Relude.Extra.Map,
+    module Lens.Micro, 
+    module Lens.Micro.Mtl, 
+    module Data.Default,
+    MonadError,
+    throwError,
+    catchError,
+    handleError,
+
+    UInt,
+    io,
+    whenMA,
+
+) where
+
+import Relude
+import Relude.Extra.Map
+import Lens.Micro
+import Lens.Micro.Mtl
+import Data.Default
+import Control.Monad.Except (MonadError, throwError, catchError, handleError)
+
+type UInt = Word
+
+io :: MonadIO m => IO a -> m a
+io = liftIO
+{-# INLINE io #-}
+
+whenMA :: Monad m => m Bool -> a -> m a -> m a
+whenMA = \mb a ma ->
+    mb >>= \case
+        False -> pure $ a
+        True  -> ma
+{-# INLINE whenMA #-}

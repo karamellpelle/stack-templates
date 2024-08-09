@@ -2,3 +2,5 @@ karamellpelle-rio:
   description: application based on RIO
 relude-app:
   description: application based on relude
+relude-ghci:
+  description: ghci script based on relude

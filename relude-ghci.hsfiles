@@ -110,7 +110,7 @@ extra-source-files:
 synopsis:
     A stack template for ghci scripts
 
-language: GHC2021 # FIXME: use GHC2024 when stack includes 6.10.1 <= GHC
+language: GHC2024
 
 data-dir:            
     data-dir
@@ -148,7 +148,6 @@ ghc-options:
     - -Wno-unused-imports
 
 default-extensions:
-    - GHC2021 # FIXME: GHC2024
     - NoImplicitPrelude
     - OverloadedStrings
     - LambdaCase

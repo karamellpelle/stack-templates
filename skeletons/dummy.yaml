@@ -1,7 +1,7 @@
 ---
 name: "dummy"
 github-username: "github-dummy"
-license: "DUMMYLICENSE"
+license: "WTFPL"
 author-name: "Dummy Author"
 author-email: "dummyauthor@mustache.rb"
 copyright: "Dummy Inc."

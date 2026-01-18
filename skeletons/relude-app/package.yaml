@@ -68,18 +68,18 @@ ghc-options:
     - -Wno-unused-top-binds
     - -Wno-unused-matches
     - -Wno-unused-imports
+    - -Wno-dodgy-exports
 
 default-extensions:
     - NoImplicitPrelude
     - OverloadedStrings
-    - LambdaCase
 
 
 # private libraries (https://github.com/sol/hpack#library-fields)
 internal-libraries:
 
-    {{name}}-internal:
-        source-dirs:  source-internal
+    internal:
+        source-dirs: internal
         exposed-modules:
             - My
         #dependencies:
@@ -96,7 +96,7 @@ executables:
             - Paths_{{name-as-varid}}
             - PackageInfo_{{name-as-varid}}
         dependencies:
-            - {{name}}-internal
+            - {{name}}:internal
             - file-io
             - os-string
             - directory
@@ -106,7 +106,10 @@ executables:
 
 #library:
 #    source-dirs:    source-lib
+#    dependencies:
+#        - {{name}}:internal
 #    exposed-modules:
+#    other-modules:
 #    generated-other-modules:
 #        - Paths_{{name-as-varid}}
 
@@ -121,7 +124,7 @@ tests:
             - -with-rtsopts "-N -T"
             - -Wno-unused-packages
         dependencies:
-            - {{name}}-internal
+            - {{name}}:internal
             - pretty-simple
             - hedgehog
             - tasty
